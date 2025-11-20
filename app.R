@@ -47,7 +47,7 @@ PYTHON_OUTPUT_DIR <- Sys.getenv("PYTHON_OUTPUT_DIR", file.path(APP_DIR, "/output
 
 dir.create(PLOTS_DIR,  showWarnings = FALSE, recursive = TRUE)
 dir.create(OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
-# dir.create(PYTHON_OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
+dir.create(PYTHON_OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 # ---- UI / Theme (unchanged except small add) ----
 
