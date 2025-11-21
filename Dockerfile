@@ -60,7 +60,7 @@ RUN R -e "BiocManager::install(c('org.Hs.eg.db', 'org.Mm.eg.db', 'clusterProfile
 
 # Copy all necessary files into the container
 COPY ./www /app/www/
-COPY ./r_functions app/r_functions/
+COPY ./r_functions /app/r_functions/
 COPY ./python_scripts /app/python_scripts
 COPY ./data /app/data
 COPY app.R /app/app.R
