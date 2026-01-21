@@ -10,11 +10,27 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libglpk-dev \
     libgmp-dev \
+    python3.10 \
+    python3-pip \
+    build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
 WORKDIR /app
+
+# Install python libraries
+RUN pip install --no-cache-dir \
+    numpy \
+    pandas \
+    scikit-learn \
+    umap-learn \
+    matplotlib \
+    seaborn \
+    scipy \
+    shap \
+    tabpfn \
+    "tabpfn-extensions[all]"
 
 # Install Bioconductor manager
 RUN R -e "install.packages('BiocManager', repos='https://cloud.r-project.org/')"
@@ -24,23 +40,6 @@ RUN R -e "install.packages(c( \
     'magrittr', 'dplyr', 'data.table', 'ggplot2', 'tidyr', 'purrr', \
     'RColorBrewer', 'gridExtra', 'tibble', 'shiny', 'DT', 'png', 'grid'), \
     repos='https://cloud.r-project.org/')"
-# Use the Shiny-verse base image for R and Shiny
-FROM rocker/shiny-verse:4.3.3
-
-# Install system dependencies required for some R packages
-RUN apt-get update && apt-get install -y \
-    libnetcdf-dev \
-    libhdf5-dev \
-    libxml2-dev \
-    libcurl4-openssl-dev \
-    libssl-dev \
-    libglpk-dev \
-    libgmp-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory
-WORKDIR /app
 
 # Install Bioconductor manager
 RUN R -e "install.packages('BiocManager', repos='https://cloud.r-project.org/')"
