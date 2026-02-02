@@ -226,7 +226,7 @@ server <- function(input, output, session){
     }
     
     # Append new dataset (overwrite if name already exists)
-    training_list[["Query"]] <- new_dataset
+    training_list[["00Query"]] <- new_dataset
     
     # Save back to RDS
     # saveRDS(training_list, training_path)
@@ -595,7 +595,7 @@ server <- function(input, output, session){
     
 ## ---- plot machine-learning results ----
     ai_prediction = read.csv(paste0(OUTPUT_DIR,"/python_output/all_sample_scores.csv"))
-    query_samples = ai_prediction %>% subset(Batch=="Query")
+    query_samples = ai_prediction %>% subset(Batch=="00Query")
     
     for(sample in query_samples$X){
       plot_browning_score(sample,ai_prediction,plot_dir)
@@ -604,8 +604,8 @@ server <- function(input, output, session){
     
 ## ----Return results----
     list(
-      # imputed_matrix = imputed_matrix,
-      ai_prediction = NULL,  # placeholder for future
+      imputed_matrix = imputed_matrix,
+      ai_prediction = ai_prediction,
       plot_dir = plot_dir,
       out_date = out_date
     )

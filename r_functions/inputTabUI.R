@@ -2,7 +2,7 @@ inputTabUI <- function() {
   fluidPage(
     fluidRow(
       column(
-        width = 8,
+        width = 6,
         h3("Upload Data"),
         p("Select your input data file below (CSV or RDS format)."),
         fileInput(
@@ -19,7 +19,7 @@ inputTabUI <- function() {
         strong(textOutput("analysis_status"))
       ),
       column(
-        width = 4,
+        width = 6,
         h3("Data Preview"),
         p("After uploading and running analysis, a preview of the data will appear here."),
         DTOutput("preview_table"),
