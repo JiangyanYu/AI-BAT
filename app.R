@@ -17,6 +17,7 @@ library(glue)
 # ---- load functions ----
 source("./r_functions/project_X_to_Y_proteins.R")
 source("./r_functions/resultsTabUI.R")
+source("./r_functions/preprocessTabUI.R")
 source("./r_functions/inputTabUI.R")
 source("./r_functions/examplesTabUI.R")
 source("./r_functions/run_python_pipeline.R")
@@ -42,12 +43,12 @@ OUTPUT_DIR <- Sys.getenv("OUTPUT_DIR", file.path(APP_DIR, "/output"))
 PYTHON_OUTPUT_DIR <- Sys.getenv("PYTHON_OUTPUT_DIR", file.path(APP_DIR, "/output/python_output"))
 
 ## remove existing output folder
-unlink(PYTHON_OUTPUT_DIR, recursive = TRUE, force = TRUE)
-unlink(OUTPUT_DIR, recursive = TRUE, force = TRUE)
-
-dir.create(PLOTS_DIR,  showWarnings = FALSE, recursive = TRUE)
-dir.create(OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
-dir.create(PYTHON_OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
+# unlink(PYTHON_OUTPUT_DIR, recursive = TRUE, force = TRUE)
+# unlink(OUTPUT_DIR, recursive = TRUE, force = TRUE)
+# 
+# dir.create(PLOTS_DIR,  showWarnings = FALSE, recursive = TRUE)
+# dir.create(OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
+# dir.create(PYTHON_OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 ## log the pipelie
 LOG_FILE <- file.path(OUTPUT_DIR, "/shiny_pipeline.log")
@@ -123,6 +124,7 @@ ui <- fluidPage(
     title = "AI-BATS",
     id = "main_navbar",
     tabPanel("Data Input", inputTabUI()),
+    tabPanel("Preprocess", preprocessTabUI()),
     tabPanel("Results", resultsTabUI()),
     tabPanel("Examples & Tutorial", examplesTabUI()),
     navbarMenu("Settings",
@@ -642,8 +644,8 @@ server <- function(input, output, session){
   output$preview_table <- renderDT({
     pd <- results()
     req(!is.null(pd))
-    if (!is.null(pd$imputed_matrix)) {
-      datatable(head(as.data.frame(pd$imputed_matrix), 5), options = list(dom = 't', paging = FALSE))
+    if (!is.null(pd$ai_prediction)) {
+      datatable(head(as.data.frame(pd$ai_prediction), 5), options = list(dom = 't', paging = FALSE))
     } else {
       datatable(data.frame(Note = "No matrix in results"), options = list(dom = 't'))
     }
@@ -659,16 +661,16 @@ server <- function(input, output, session){
   })
 
 ## ----Results table----
-  output$results_table <- renderDT({
+  output$final_results_table <- renderDT({
     dat <- results(); req(!is.null(dat))
     if (is.data.frame(dat)) {
       datatable(dat, options = list(pageLength = 10, autoWidth = TRUE))
-    } else if (is.list(dat) && !is.null(dat$imputed_matrix)) {
-      datatable(as.data.frame(dat$imputed_matrix), options = list(pageLength = 10, autoWidth = TRUE))
+    } else if (is.list(dat) && !is.null(dat$ai_prediction)) {
+      datatable(as.data.frame(dat$ai_prediction), options = list(pageLength = 10, autoWidth = TRUE))
     } else {
       datatable(data.frame(Note = "No renderable data frame in results"), options = list(dom = 't'))
-    }
-  })
+    }                 
+  })    
 
 ## ----Plots gallery UI----
   
@@ -811,6 +813,23 @@ server <- function(input, output, session){
       dat <- results(); req(!is.null(dat))
       if (is.list(dat) && !is.null(dat$imputed_matrix)) {
         write.csv(as.data.frame(dat$imputed_matrix), file = file, row.names = TRUE)
+      } else if (is.data.frame(dat)) {
+        write.csv(dat, file = file, row.names = FALSE)
+      } else {
+        writeLines("Output is not a data frame.", file)
+      }
+    }
+  )
+  
+  output$download_final_results <- downloadHandler(
+    filename = function() {
+      od <- out_date_val()
+      paste0("final_results_", od, ".csv")
+    },
+    content = function(file) {
+      dat <- results(); req(!is.null(dat))
+      if (is.list(dat) && !is.null(dat$ai_prediction)) {
+        write.csv(as.data.frame(dat$ai_prediction), file = file, row.names = TRUE)
       } else if (is.data.frame(dat)) {
         write.csv(dat, file = file, row.names = FALSE)
       } else {
