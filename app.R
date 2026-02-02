@@ -42,12 +42,34 @@ OUTPUT_DIR <- Sys.getenv("OUTPUT_DIR", file.path(APP_DIR, "/output"))
 PYTHON_OUTPUT_DIR <- Sys.getenv("PYTHON_OUTPUT_DIR", file.path(APP_DIR, "/output/python_output"))
 
 ## remove existing output folder
- unlink(PYTHON_OUTPUT_DIR, recursive = TRUE, force = TRUE)
- unlink(OUTPUT_DIR, recursive = TRUE, force = TRUE)
+unlink(PYTHON_OUTPUT_DIR, recursive = TRUE, force = TRUE)
+unlink(OUTPUT_DIR, recursive = TRUE, force = TRUE)
 
 dir.create(PLOTS_DIR,  showWarnings = FALSE, recursive = TRUE)
 dir.create(OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
 dir.create(PYTHON_OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
+
+## log the pipelie
+LOG_FILE <- file.path(OUTPUT_DIR, "/shiny_pipeline.log")
+
+appendLog <- function(txt, session = NULL) {
+  line <- paste0(
+    format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+    " | ",
+    if (!is.null(session)) paste0("session=", session$token, " | "),
+    txt
+  )
+
+  # Write to global log file
+  cat(line, "\n", file = LOG_FILE, append = TRUE)
+
+  # Optional: also update UI console
+  if (!is.null(session)) {
+    session$userData$console_log(
+      paste0(session$userData$console_log(), line, "\n")
+    )
+  }
+}
 
 # ---- UI / Theme (unchanged except small add) ----
 
@@ -123,22 +145,44 @@ server <- function(input, output, session){
 
 ## ----- Upload debug in UI -----
   output$debug_upload <- renderPrint({
-    if (is.null(input$data_file)) return("❌ No file uploaded yet")
+    if (is.null(input$data_file))
+    return("❌ No file uploaded yet")
+
     df <- input$data_file
+
+    read_error <- NULL
+    read_ok <- TRUE
+
+    tryCatch({
+      read.csv(df$datapath, row.names = 1)
+    }, error = function(e) {
+      read_error <<- e$message
+      read_ok <<- FALSE
+    })
+
     list(
-      name     = df$name,
-      size     = df$size,
-      type     = df$type,
-      datapath = df$datapath,
-      exists   = file.exists(df$datapath)
+      name       = df$name,
+      #size       = df$size,
+      type       = df$type,
+      #datapath   = df$datapath,
+      #exists     = file.exists(df$datapath),
+      read_ok    = read_ok,
+      read_error = read_error
     )
   })
   
+  # =========================
+  # Observe file input change
+  # =========================
   observeEvent(input$data_file, {
     if (is.null(input$data_file)) return()
     message("📥 fileInput changed: ", input$data_file$name)
+    appendLog(paste0("File uploaded: ", input$data_file$name))
+
     message("   → datapath: ", input$data_file$datapath, " (exists: ", file.exists(input$data_file$datapath), ")")
+    appendLog(paste0("   → datapath: ", input$data_file$datapath, " (exists: ", file.exists(input$data_file$datapath), ")"))
   }, ignoreInit = FALSE)
+
 
   # robust loader: if CSV -> wrap into list with single dataset, if RDS and list -> use as-is
   # Robust loader: CSV upload → append to /data/training.rds → return full list
@@ -146,6 +190,7 @@ server <- function(input, output, session){
     req(input$data_file)
     ext <- tolower(tools::file_ext(input$data_file$name))
     message("📥 Loading file: ", input$data_file$name, " (ext=", ext, ")")
+    appendLog(paste0("📥 Loading file: ", input$data_file$name, " (ext=", ext, ")"))
     
     if (ext != "csv") {
       stop("Please upload a CSV file. RDS upload is not supported in this version.")
@@ -159,6 +204,7 @@ server <- function(input, output, session){
     mat <- as.matrix(df)
     dataset_name <- tools::file_path_sans_ext(basename(input$data_file$name))
     message("✅ CSV loaded: dim=", paste(dim(mat), collapse = " x "), ", dataset_name=", dataset_name)
+    appendLog(paste0("✅ CSV loaded: dim=", paste(dim(mat), collapse = " x "), ", dataset_name=", dataset_name))
     
     # Create the structure expected by the pipeline
     new_dataset <- list(intensity = mat, meta = list(sample = colnames(mat), tissue = NA, diet = NA))
@@ -167,6 +213,7 @@ server <- function(input, output, session){
     training_path <- "./data/training.rds"
     if (file.exists(training_path)) {
       message("📂 Loading existing training list from: ", training_path)
+      appendLog(paste0("📂 Loading existing training list from: ", training_path))
       training_list <- readRDS(training_path)
       if (!is.list(training_list)) {
         warning("Existing training.rds is not a list — reinitializing.")
@@ -174,6 +221,7 @@ server <- function(input, output, session){
       }
     } else {
       message("🆕 No training.rds found. Creating a new list.")
+      appendLog("🆕 No training.rds found. Creating a new list.")
       training_list <- list()
     }
     
@@ -184,6 +232,8 @@ server <- function(input, output, session){
     # saveRDS(training_list, training_path)
     message("💾 Updated training list saved to: ", training_path,
             " (", length(training_list), " datasets total)")
+    appendLog(paste0("💾 Updated training list saved to: ", training_path,
+            " (", length(training_list), " datasets total)"))
     
     # Return full list to feed into preprocessing
     return(training_list)
@@ -196,11 +246,13 @@ server <- function(input, output, session){
 ###eventReactive: run the whole pipeline once button pressed
   processed_data <- eventReactive(input$run_analysis, {
     message("▶️ Run Analysis button pressed")
+    appendLog("▶️ Run Analysis button pressed")
 
     # create run-specific plot dir
     plot_dir <- tempfile("plots_")
     dir.create(plot_dir, recursive = TRUE, showWarnings = FALSE)
     message(" [run] plot_dir = ", plot_dir)
+    appendLog(paste0(" [run] plot_dir = ", plot_dir))
 
     data_stes <- data_input()
     # Expect data_stes to be a named list of dataset objects each with $intensity and $meta
@@ -437,6 +489,7 @@ server <- function(input, output, session){
 
       data_stes[[dataset_name]][["projection"]] <- as.data.frame(project_X_to_Y_proteins(X_count, Y_count))
       message("Projection finished for ", dataset_name)
+      appendLog(paste0("Projection finished for ", dataset_name))
       }
 
     print("Projection Complete")
@@ -495,6 +548,7 @@ server <- function(input, output, session){
     out_csv <- file.path(OUTPUT_DIR, paste0("imputed_matrix_", out_date, ".csv"))
     write.csv(imputed_matrix, file = paste0(OUTPUT_DIR,"/imputed_matrix_", out_date, ".csv"), row.names = TRUE)
     message("Saved imputed CSV to: ", out_csv)
+    appendLog(paste0("Saved imputed CSV to: ", out_csv))
 
     # Make a simple PCA plot and save it (robust)
     pca_ok <- try({
@@ -560,6 +614,7 @@ server <- function(input, output, session){
   # observer that reacts to the button and updates UI using processed_data()
   observeEvent(input$run_analysis, {
     message("⚡ collect processed_data() result and update UI")
+    appendLog("⚡ collect processed_data() result and update UI")
     pd <- NULL
     try({
       pd <- processed_data()
@@ -568,6 +623,7 @@ server <- function(input, output, session){
     if (is.null(pd)) {
       output$analysis_status <- renderText("❌ processed_data() returned NULL — check console.")
       message("processed_data returned NULL")
+      appendLog("processed_data returned NULL")
       return()
     }
     results(pd)
@@ -576,6 +632,7 @@ server <- function(input, output, session){
       pngs <- list.files(pd$plot_dir, pattern = "\\.png$", full.names = TRUE)
       output_plots(pngs)
       message("🖼️ Found ", length(pngs), " plot(s) in ", pd$plot_dir)
+      appendLog(paste0("🖼️ Found ", length(pngs), " plot(s) in ", pd$plot_dir))
     } else {
       output_plots(character(0))
     }
@@ -694,6 +751,7 @@ server <- function(input, output, session){
     
     # Debug print
     message("DEBUG (final results): Found ", length(img_files), " final result figures.")
+    appendLog( paste0("DEBUG (final results): Found ", length(img_files), " final result figures.") )
     
     # ---- DYNAMIC UI CREATION ----
     output$final_figures_gallery <- renderUI({
