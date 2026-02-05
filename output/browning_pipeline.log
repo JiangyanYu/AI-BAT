@@ -1,4 +1,56 @@
-Traceback (most recent call last):
-  File "/Users/Yu_J/Documents/GitHub/AI-BAT/./python_scripts/browning_pipeline.py", line 45, in <module>
-    from sklearn.preprocessing import StandardScaler, LabelEncoder
-ModuleNotFoundError: No module named 'sklearn'
+/usr/local/lib/python3.10/dist-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+/usr/local/lib/python3.10/dist-packages/umap/umap_.py:1952: UserWarning: n_jobs value 1 overridden to 1 by setting random_state. Use no seed for parallelism.
+  warn(
+Namespace(protein_data_path='.///output/imputed_matrix_2026-02-05.csv', precomputed_lasso_coefs_path='./data/python_input/coefs_from_lasso.pkl', brown_markers_path='./data/python_input/marker.txt', sample_labels_path='.///output/meta_data2026-02-05.csv', recompute_lasso_markers=True, compute_shaps=False)
+LASSO genes not found, calculating...
+Selected (92, 5) features using LASSO.
+
+## Generating Base Plots ##
+
+## Generating Base Plots ##
+(116, 1551)
+PCA Explained Variance Ratios: [0.083937   0.04865588]
+--- Calculating LDA-based Score (PCA features) ---
+--- Calculating LDA-based Score (LASSO features) ---
+--- Calculating Random Forest-based Score ---
+--- Calculating Logistic Regression-based Score (LASSO features) ---
+--- Calculating Logistic Regression-based Score (Marker genes) ---
+Sample of calculated scores:
+                                                    pca_browning_score_PC1  ...     Batch
+Haas2021-Haas2021-X.9..TP_Thermogenesis_RT_A.PG...               82.914047  ...  Haas2021
+Haas2021-Haas2021-X.10..TP_Thermogenesis_RT_B.P...               84.375089  ...  Haas2021
+Haas2021-Haas2021-X.11..TP_Thermogenesis_RT_C.P...               83.310491  ...  Haas2021
+Haas2021-Haas2021-X.12..TP_Thermogenesis_RT_D.P...               82.985774  ...  Haas2021
+Haas2022-Haas2022-X.9..2022_TP_Thermogenesis_RT...               83.072628  ...  Haas2022
+
+[5 rows x 19 columns]
+--- Generating score distribution plots ---
+
+## Plotting Score Distributions ##
+[plot_score_distributions] Saved ./output/python_output/pca_browning_score_PC1_distribution.png
+[plot_score_distributions] Saved ./output/python_output/pca_browning_score_PC2_distribution.png
+[plot_score_distributions] Saved ./output/python_output/lda_browning_score_Brown_distribution.png
+[plot_score_distributions] Saved ./output/python_output/lda_browning_score_White_distribution.png
+[plot_score_distributions] Saved ./output/python_output/lda_browning_score_Brown_lasso_distribution.png
+[plot_score_distributions] Saved ./output/python_output/lda_browning_score_White_lasso_distribution.png
+[plot_score_distributions] Saved ./output/python_output/rf_browning_score_Brown_distribution.png
+[plot_score_distributions] Saved ./output/python_output/rf_browning_score_White_distribution.png
+[plot_score_distributions] Saved ./output/python_output/lr_browning_score_Brown_distribution.png
+[plot_score_distributions] Saved ./output/python_output/lr_browning_score_White_distribution.png
+[plot_score_distributions] Saved ./output/python_output/lr_browning_score_Brown_markers_distribution.png
+[plot_score_distributions] Saved ./output/python_output/lr_browning_score_White_markers_distribution.png
+[plot_score_distributions] Saved ./output/python_output/Composite_Score_distribution.png
+[plot_score_distributions] Saved ./output/python_output/e-net_tissue_score_BAT_distribution.png
+[plot_score_distributions] Saved ./output/python_output/e-net_tissue_score_WAT_distribution.png
+[plot_score_distributions] Saved ./output/python_output/e-net_tissue_score_eWAT_distribution.png
+[plot_score_distributions] Saved ./output/python_output/e-net_tissue_score_iWAT_distribution.png
+=== AI-BATS Pipeline Completed Successfully ===
+Results saved to: script_outputs/
+- Comprehensive scores: all_sample_scores.csv
+- Visualizations: Various PNG files
+- SHAP analysis: SHAP value arrays and plots
+- Feature importance: Individual model importance plots
+- Correlation analysis: correlation_matrix.png
+Total time taken: 63.72280788421631 seconds
+[W205 07:46:16.411329165 AllocatorConfig.cpp:28] Warning: PYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function operator())

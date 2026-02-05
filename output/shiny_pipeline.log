@@ -1,147 +1,27 @@
-2026-02-02 08:15:44 | ▶️ Run Analysis button pressed 
-2026-02-02 08:15:44 |  [run] plot_dir = /tmp/RtmpwqxAbJ/plots_117be9869 
-2026-02-02 08:15:48 | File uploaded: Rhabi_control1.csv 
-2026-02-02 08:15:48 |    → datapath: /tmp/RtmpwqxAbJ/238a1c69bb2d791ed574aa25/0.csv (exists: TRUE) 
-2026-02-02 08:15:49 | ⚡ collect processed_data() result and update UI 
-2026-02-02 08:15:49 | ▶️ Run Analysis button pressed 
-2026-02-02 08:15:49 |  [run] plot_dir = /tmp/RtmpwqxAbJ/plots_1324dcdb8 
-2026-02-02 08:15:49 | 📥 Loading file: Rhabi_control1.csv (ext=csv) 
-2026-02-02 08:15:49 | ✅ CSV loaded: dim=3288 x 1, dataset_name=Rhabi_control1 
-2026-02-02 08:15:49 | 📂 Loading existing training list from: ./data/training.rds 
-2026-02-02 08:15:51 | 💾 Updated training list saved to: ./data/training.rds (13 datasets total) 
-2026-02-02 08:16:10 | Projection finished for Haas2021_RT_control.rds 
-2026-02-02 08:16:13 | Projection finished for Haas2022_RT_control.rds 
-2026-02-02 08:16:32 | Projection finished for Harney_BAT_control.rds 
-2026-02-02 08:16:40 | Projection finished for Johanna_control.rds 
-2026-02-02 08:16:44 | Projection finished for KristinaeWAT_eWat_control.rds 
-2026-02-02 08:16:50 | Projection finished for KristinaiWAT_iWat_control.rds 
-2026-02-02 08:16:57 | Projection finished for Melina_control 
-2026-02-02 08:17:03 | Projection finished for Oeckl_control.rds 
-2026-02-02 08:17:05 | Projection finished for Rhabi_control.rds 
-2026-02-02 08:17:07 | Projection finished for WangBAT_control 
-2026-02-02 08:17:10 | Projection finished for WangWAT_control 
-2026-02-02 08:17:13 | Projection finished for Williams_control.rds 
-2026-02-02 08:17:14 | Projection finished for 00Query 
-2026-02-02 08:17:15 | Saved imputed CSV to: .///output/imputed_matrix_2026-02-02.csv 
-2026-02-02 08:18:42 | 🖼️ Found 8 plot(s) in /tmp/RtmpwqxAbJ/plots_1324dcdb8 
-2026-02-02 08:18:42 | DEBUG (final results): Found 1 final result figures. 
-2026-02-02 09:26:48 | ▶️ Run Analysis button pressed 
-2026-02-02 09:26:48 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec2749ff5b 
-2026-02-02 09:26:56 | File uploaded: Rhabi_control1.csv 
-2026-02-02 09:26:56 |    → datapath: /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/d98ccee1ffd4869f843f539d/0.csv (exists: TRUE) 
-2026-02-02 09:27:00 | ⚡ collect processed_data() result and update UI 
-2026-02-02 09:27:00 | ▶️ Run Analysis button pressed 
-2026-02-02 09:27:00 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec4d077880 
-2026-02-02 09:27:00 | 📥 Loading file: Rhabi_control1.csv (ext=csv) 
-2026-02-02 09:27:00 | ✅ CSV loaded: dim=3288 x 1, dataset_name=Rhabi_control1 
-2026-02-02 09:27:00 | 📂 Loading existing training list from: ./data/training.rds 
-2026-02-02 09:27:00 | 💾 Updated training list saved to: ./data/training.rds (13 datasets total) 
-2026-02-02 09:27:03 | Projection finished for Haas2021_RT_control.rds 
-2026-02-02 09:27:04 | Projection finished for Haas2022_RT_control.rds 
-2026-02-02 09:27:08 | Projection finished for Harney_BAT_control.rds 
-2026-02-02 09:27:09 | Projection finished for Johanna_control.rds 
-2026-02-02 09:27:09 | Projection finished for KristinaeWAT_eWat_control.rds 
-2026-02-02 09:27:10 | Projection finished for KristinaiWAT_iWat_control.rds 
-2026-02-02 09:27:11 | Projection finished for Melina_control 
-2026-02-02 09:27:12 | Projection finished for Oeckl_control.rds 
-2026-02-02 09:27:12 | Projection finished for Rhabi_control.rds 
-2026-02-02 09:27:13 | Projection finished for WangBAT_control 
-2026-02-02 09:27:13 | Projection finished for WangWAT_control 
-2026-02-02 09:27:14 | Projection finished for Williams_control.rds 
-2026-02-02 09:27:14 | Projection finished for 00Query 
-2026-02-02 09:27:14 | Saved imputed CSV to: .///output/imputed_matrix_2026-02-02.csv 
-2026-02-02 09:27:15 | 🖼️ Found 8 plot(s) in /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec4d077880 
-2026-02-02 09:27:15 | DEBUG (final results): Found 1 final result figures. 
-2026-02-02 10:00:28 | ▶️ Run Analysis button pressed 
-2026-02-02 10:00:28 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec2f70e957 
-2026-02-02 10:00:31 | File uploaded: Rhabi_control1.csv 
-2026-02-02 10:00:31 |    → datapath: /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/0acd33abfc0e1785061aae36/0.csv (exists: TRUE) 
-2026-02-02 10:00:33 | ⚡ collect processed_data() result and update UI 
-2026-02-02 10:00:33 | ▶️ Run Analysis button pressed 
-2026-02-02 10:00:33 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec2486013e 
-2026-02-02 10:00:33 | 📥 Loading file: Rhabi_control1.csv (ext=csv) 
-2026-02-02 10:00:33 | ✅ CSV loaded: dim=3288 x 1, dataset_name=Rhabi_control1 
-2026-02-02 10:00:33 | 📂 Loading existing training list from: ./data/training.rds 
-2026-02-02 10:00:34 | 💾 Updated training list saved to: ./data/training.rds (13 datasets total) 
-2026-02-02 10:00:37 | Projection finished for Haas2021_RT_control.rds 
-2026-02-02 10:00:38 | Projection finished for Haas2022_RT_control.rds 
-2026-02-02 10:00:41 | Projection finished for Harney_BAT_control.rds 
-2026-02-02 10:00:42 | Projection finished for Johanna_control.rds 
-2026-02-02 10:00:43 | Projection finished for KristinaeWAT_eWat_control.rds 
-2026-02-02 10:00:44 | Projection finished for KristinaiWAT_iWat_control.rds 
-2026-02-02 10:00:44 | Projection finished for Melina_control 
-2026-02-02 10:00:45 | Projection finished for Oeckl_control.rds 
-2026-02-02 10:00:46 | Projection finished for Rhabi_control.rds 
-2026-02-02 10:00:46 | Projection finished for WangBAT_control 
-2026-02-02 10:00:47 | Projection finished for WangWAT_control 
-2026-02-02 10:00:48 | Projection finished for Williams_control.rds 
-2026-02-02 10:00:48 | Projection finished for 00Query 
-2026-02-02 10:00:48 | Saved imputed CSV to: .///output/imputed_matrix_2026-02-02.csv 
-2026-02-02 10:00:48 | 🖼️ Found 8 plot(s) in /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec2486013e 
-2026-02-02 10:00:48 | DEBUG (final results): Found 1 final result figures. 
-2026-02-02 10:14:03 | ▶️ Run Analysis button pressed 
-2026-02-02 10:14:03 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec60c86294 
-2026-02-02 10:14:06 | File uploaded: Rhabi_control1.csv 
-2026-02-02 10:14:06 |    → datapath: /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/a47e4e95d2c654a95bc1c79e/0.csv (exists: TRUE) 
-2026-02-02 10:14:08 | ⚡ collect processed_data() result and update UI 
-2026-02-02 10:14:08 | ▶️ Run Analysis button pressed 
-2026-02-02 10:14:08 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec6d042a91 
-2026-02-02 10:14:08 | 📥 Loading file: Rhabi_control1.csv (ext=csv) 
-2026-02-02 10:14:08 | ✅ CSV loaded: dim=3288 x 1, dataset_name=Rhabi_control1 
-2026-02-02 10:14:08 | 📂 Loading existing training list from: ./data/training.rds 
-2026-02-02 10:14:08 | 💾 Updated training list saved to: ./data/training.rds (13 datasets total) 
-2026-02-02 10:14:12 | Projection finished for Haas2021_RT_control.rds 
-2026-02-02 10:14:12 | Projection finished for Haas2022_RT_control.rds 
-2026-02-02 10:14:16 | Projection finished for Harney_BAT_control.rds 
-2026-02-02 10:14:16 | Projection finished for Johanna_control.rds 
-2026-02-02 10:14:17 | Projection finished for KristinaeWAT_eWat_control.rds 
-2026-02-02 10:14:18 | Projection finished for KristinaiWAT_iWat_control.rds 
-2026-02-02 10:14:19 | Projection finished for Melina_control 
-2026-02-02 10:14:20 | Projection finished for Oeckl_control.rds 
-2026-02-02 10:14:20 | Projection finished for Rhabi_control.rds 
-2026-02-02 10:14:21 | Projection finished for WangBAT_control 
-2026-02-02 10:14:22 | Projection finished for WangWAT_control 
-2026-02-02 10:14:22 | Projection finished for Williams_control.rds 
-2026-02-02 10:14:23 | Projection finished for 00Query 
-2026-02-02 10:14:23 | Saved imputed CSV to: .///output/imputed_matrix_2026-02-02.csv 
-2026-02-02 10:14:23 | 🖼️ Found 8 plot(s) in /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec6d042a91 
-2026-02-02 10:14:23 | DEBUG (final results): Found 1 final result figures. 
-2026-02-02 10:17:12 | ▶️ Run Analysis button pressed 
-2026-02-02 10:17:12 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec6358336e 
-2026-02-02 10:17:16 | File uploaded: Rhabi_control1.csv 
-2026-02-02 10:17:16 |    → datapath: /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/6a90ddb3dda9164ea8d64327/0.csv (exists: TRUE) 
-2026-02-02 10:17:18 | ⚡ collect processed_data() result and update UI 
-2026-02-02 10:17:18 | ▶️ Run Analysis button pressed 
-2026-02-02 10:17:18 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec47043511 
-2026-02-02 10:17:18 | 📥 Loading file: Rhabi_control1.csv (ext=csv) 
-2026-02-02 10:17:18 | ✅ CSV loaded: dim=3288 x 1, dataset_name=Rhabi_control1 
-2026-02-02 10:17:18 | 📂 Loading existing training list from: ./data/training.rds 
-2026-02-02 10:17:19 | 💾 Updated training list saved to: ./data/training.rds (13 datasets total) 
-2026-02-02 10:17:22 | Projection finished for Haas2021_RT_control.rds 
-2026-02-02 10:17:22 | Projection finished for Haas2022_RT_control.rds 
-2026-02-02 10:17:26 | Projection finished for Harney_BAT_control.rds 
-2026-02-02 10:17:26 | Projection finished for Johanna_control.rds 
-2026-02-02 10:17:27 | Projection finished for KristinaeWAT_eWat_control.rds 
-2026-02-02 10:17:28 | Projection finished for KristinaiWAT_iWat_control.rds 
-2026-02-02 10:17:29 | Projection finished for Melina_control 
-2026-02-02 10:17:30 | Projection finished for Oeckl_control.rds 
-2026-02-02 10:17:31 | Projection finished for Rhabi_control.rds 
-2026-02-02 10:17:31 | Projection finished for WangBAT_control 
-2026-02-02 10:17:32 | Projection finished for WangWAT_control 
-2026-02-02 10:17:32 | Projection finished for Williams_control.rds 
-2026-02-02 10:17:33 | Projection finished for 00Query 
-2026-02-02 10:17:33 | Saved imputed CSV to: .///output/imputed_matrix_2026-02-02.csv 
-2026-02-02 10:17:33 | 🖼️ Found 8 plot(s) in /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec47043511 
-2026-02-02 10:17:33 | DEBUG (final results): Found 1 final result figures. 
-2026-02-02 10:23:11 | ▶️ Run Analysis button pressed 
-2026-02-02 10:23:11 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec155d233a 
-2026-02-02 10:27:27 | ▶️ Run Analysis button pressed 
-2026-02-02 10:27:27 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec2b69088d 
-2026-02-02 10:29:01 | ▶️ Run Analysis button pressed 
-2026-02-02 10:29:01 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec4260d26 
-2026-02-02 10:34:53 | ▶️ Run Analysis button pressed 
-2026-02-02 10:34:53 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec1cb92d70 
-2026-02-02 10:36:47 | ▶️ Run Analysis button pressed 
-2026-02-02 10:36:47 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec7846eb36 
-2026-02-02 10:41:04 | ▶️ Run Analysis button pressed 
-2026-02-02 10:41:04 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmphFf1dw/plots_4bec614db28b 
+2026-02-05 07:43:22 | ▶️ Run Analysis button pressed 
+2026-02-05 07:43:22 |  [run] plot_dir = /tmp/Rtmp2cda9x/plots_14cab0190 
+2026-02-05 07:43:26 | File uploaded: Rhabi_control1.csv 
+2026-02-05 07:43:26 |    → datapath: /tmp/Rtmp2cda9x/31827a2431a666a47a3507db/0.csv (exists: TRUE) 
+2026-02-05 07:43:29 | ⚡ collect processed_data() result and update UI 
+2026-02-05 07:43:29 | ▶️ Run Analysis button pressed 
+2026-02-05 07:43:29 |  [run] plot_dir = /tmp/Rtmp2cda9x/plots_1400ac103 
+2026-02-05 07:43:29 | 📥 Loading file: Rhabi_control1.csv (ext=csv) 
+2026-02-05 07:43:29 | ✅ CSV loaded: dim=3288 x 1, dataset_name=Rhabi_control1 
+2026-02-05 07:43:29 | 📂 Loading existing training list from: ./data/training.rds 
+2026-02-05 07:43:31 | 💾 Updated training list saved to: ./data/training.rds (13 datasets total) 
+2026-02-05 07:43:50 | Projection finished for Haas2021_RT_control.rds 
+2026-02-05 07:43:53 | Projection finished for Haas2022_RT_control.rds 
+2026-02-05 07:44:10 | Projection finished for Harney_BAT_control.rds 
+2026-02-05 07:44:17 | Projection finished for Johanna_control.rds 
+2026-02-05 07:44:22 | Projection finished for KristinaeWAT_eWat_control.rds 
+2026-02-05 07:44:26 | Projection finished for KristinaiWAT_iWat_control.rds 
+2026-02-05 07:44:32 | Projection finished for Melina_control 
+2026-02-05 07:44:36 | Projection finished for Oeckl_control.rds 
+2026-02-05 07:44:38 | Projection finished for Rhabi_control.rds 
+2026-02-05 07:44:40 | Projection finished for WangBAT_control 
+2026-02-05 07:44:43 | Projection finished for WangWAT_control 
+2026-02-05 07:44:45 | Projection finished for Williams_control.rds 
+2026-02-05 07:44:46 | Projection finished for 00Query 
+2026-02-05 07:44:47 | Saved imputed CSV to: .///output/imputed_matrix_2026-02-05.csv 
+2026-02-05 07:46:18 | 🖼️ Found 8 plot(s) in /tmp/Rtmp2cda9x/plots_1400ac103 
+2026-02-05 07:46:18 | DEBUG (final results): Found 1 final result figures. 

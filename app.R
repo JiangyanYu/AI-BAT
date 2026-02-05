@@ -43,12 +43,12 @@ OUTPUT_DIR <- Sys.getenv("OUTPUT_DIR", file.path(APP_DIR, "/output"))
 PYTHON_OUTPUT_DIR <- Sys.getenv("PYTHON_OUTPUT_DIR", file.path(APP_DIR, "/output/python_output"))
 
 ## remove existing output folder
-# unlink(PYTHON_OUTPUT_DIR, recursive = TRUE, force = TRUE)
-# unlink(OUTPUT_DIR, recursive = TRUE, force = TRUE)
-# 
-# dir.create(PLOTS_DIR,  showWarnings = FALSE, recursive = TRUE)
-# dir.create(OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
-# dir.create(PYTHON_OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
+unlink(PYTHON_OUTPUT_DIR, recursive = TRUE, force = TRUE)
+unlink(OUTPUT_DIR, recursive = TRUE, force = TRUE)
+
+dir.create(PLOTS_DIR,  showWarnings = FALSE, recursive = TRUE)
+dir.create(OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
+dir.create(PYTHON_OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
 
 ## log the pipelie
 LOG_FILE <- file.path(OUTPUT_DIR, "/shiny_pipeline.log")
