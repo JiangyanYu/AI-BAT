@@ -120,8 +120,13 @@ def main(protein_data_path = './output/imputed_matrix_2025-11-10.csv',
     protein_df, brown_markers, white_markers, sample_labels, batch_labels, lda_features, markers, tissue, diet= load_example_data(protein_data_path = protein_data_path, precomputed_lasso_coefs_path=precomputed_lasso_coefs_path, 
                       brown_markers_path=brown_markers_path, sample_labels_path=sample_labels_path)
 
-    #print(protein_df.index)
-    #print(sample_labels.index)
+    # Tissue Prediction Pipeline Initialization
+    tissue_pipeline = MLTissuePredictionPipeline()
+    tissue_scores  = tissue_pipeline.fit(protein_df, tissue).predict_proba(protein_df)
+    #print("Tissue prediction scores:")
+    #print(tissue_scores.head())
+    #quit()
+
     # ==========================================================================
     # SECTION 2: FEATURE SELECTION WITH LASSO REGRESSION
     # ==========================================================================
@@ -279,6 +284,14 @@ def main(protein_data_path = './output/imputed_matrix_2025-11-10.csv',
     # --- Save Comprehensive Results ---
     # Store all calculated scores in a CSV file for further analysis and reporting
     all_sample_scores['Composite_Score'] = composite_score
+    all_sample_scores = all_sample_scores.join(tissue_scores, how='left', rsuffix='_tissue_prediction')
+
+    #scale scores between 0 and 100
+    from sklearn.preprocessing import MinMaxScaler
+    scaler = MinMaxScaler(feature_range=(0, 100))
+    s_b = all_sample_scores[['Status', 'Batch']].copy()
+    all_sample_scores = pd.DataFrame(scaler.fit_transform(all_sample_scores.drop(columns=['Status', 'Batch'])), index=all_sample_scores.index, columns=all_sample_scores.drop(columns=['Status', 'Batch']).columns)
+    all_sample_scores = all_sample_scores.join(s_b)
     all_sample_scores.to_csv(f'{output_dir}/all_sample_scores.csv')
 
     # Display sample results for verification
@@ -384,10 +397,10 @@ def main(protein_data_path = './output/imputed_matrix_2025-11-10.csv',
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="AI-BATS Browning Pipeline")
-    parser.add_argument("--protein_data_path", type=str, default='./output/imputed_matrix_2025-11-10.csv')
+    parser.add_argument("--protein_data_path", type=str, default='./output/imputed_matrix_2026-02-02.csv')
     parser.add_argument("--precomputed_lasso_coefs_path", type=str, default='./data/python_input/coefs_from_lasso.pkl')
     parser.add_argument("--brown_markers_path", type=str, default='./data/python_input/marker.txt')
-    parser.add_argument("--sample_labels_path", type=str, default='./output/meta_data2025-11-10.csv')
+    parser.add_argument("--sample_labels_path", type=str, default='./output/meta_data2026-02-02.csv')
     parser.add_argument("--recompute_lasso_markers", type=bool, default=True)
     parser.add_argument("--compute_shaps", type=bool, default=False)
     args = parser.parse_args()
