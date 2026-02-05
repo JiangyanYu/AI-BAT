@@ -53,6 +53,53 @@ def lasso_selection(protein_df):
 from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator, TransformerMixin
 
+class MLTissuePredictionPipeline:
+    '''Pipeline wrapper that tracks input features and provides tissue predictions.'''
+    def __init__(self, clf=None, name='e-net'):
+        self.name = name
+        
+        # Create pipeline
+        self.pipeline = Pipeline([
+            ('scaler', StandardScaler()),
+            ('pca', PCA(n_components=15)),
+            ('classifier', clf if clf is not None else LogisticRegression(penalty='elasticnet', solver='saga', l1_ratio=0.5, max_iter=10000))
+        ])
+        
+        self.is_fitted_ = False
+        self.selected_features = None
+
+    def fit(self, protein_df, sample_labels_full):
+        """Fit the pipeline on training data. Filter out NaN labels for tissue."""
+
+        protein_expr = protein_df.join(sample_labels_full, how='left')
+        #print(protein_expr['Tissue'].value_counts())
+        train = protein_expr.dropna(subset=['Tissue'])
+        
+        X_train = train.drop(columns=['Tissue'])
+        y_train = train['Tissue']
+        self.selected_features = X_train.columns.tolist()
+
+        self.pipeline.fit(X_train, y_train)
+        self.is_fitted_ = True
+
+        return self
+    
+    def predict_proba(self, protein_df, sample_labels_full=None):
+        """Get probability predictions for all samples."""
+        if not self.is_fitted_:
+            raise ValueError("Pipeline must be fitted before prediction")
+        
+        
+        # Only use features that were selected during training
+        X = protein_df[self.selected_features]
+        probas = self.pipeline.predict_proba(X)
+        
+        scores = pd.DataFrame(
+            probas,
+            index=protein_df.index,
+            columns=[f'{self.name}_tissue_score_{cls}' for cls in self.pipeline.named_steps['classifier'].classes_]
+        )
+        return scores
 
 class MLBrowningPipeline:
     """Pipeline wrapper that tracks input features and provides browning scores."""

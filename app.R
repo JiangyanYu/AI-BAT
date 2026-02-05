@@ -13,10 +13,13 @@ library(tibble)
 library(Biobase)
 #library(reticulate)
 library(glue)
+install.packages("shinyWidgets")
+library(shinyWidgets)
 
 # ---- load functions ----
 source("./r_functions/project_X_to_Y_proteins.R")
 source("./r_functions/resultsTabUI.R")
+source("./r_functions/preprocessTabUI.R")
 source("./r_functions/inputTabUI.R")
 source("./r_functions/examplesTabUI.R")
 source("./r_functions/run_python_pipeline.R")
@@ -42,12 +45,34 @@ OUTPUT_DIR <- Sys.getenv("OUTPUT_DIR", file.path(APP_DIR, "/output"))
 PYTHON_OUTPUT_DIR <- Sys.getenv("PYTHON_OUTPUT_DIR", file.path(APP_DIR, "/output/python_output"))
 
 ## remove existing output folder
- unlink(PYTHON_OUTPUT_DIR, recursive = TRUE, force = TRUE)
- unlink(OUTPUT_DIR, recursive = TRUE, force = TRUE)
+unlink(PYTHON_OUTPUT_DIR, recursive = TRUE, force = TRUE)
+unlink(OUTPUT_DIR, recursive = TRUE, force = TRUE)
 
 dir.create(PLOTS_DIR,  showWarnings = FALSE, recursive = TRUE)
 dir.create(OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
 dir.create(PYTHON_OUTPUT_DIR, showWarnings = FALSE, recursive = TRUE)
+
+## log the pipelie
+LOG_FILE <- file.path(OUTPUT_DIR, "/shiny_pipeline.log")
+
+appendLog <- function(txt, session = NULL) {
+  line <- paste0(
+    format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+    " | ",
+    if (!is.null(session)) paste0("session=", session$token, " | "),
+    txt
+  )
+
+  # Write to global log file
+  cat(line, "\n", file = LOG_FILE, append = TRUE)
+
+  # Optional: also update UI console
+  if (!is.null(session)) {
+    session$userData$console_log(
+      paste0(session$userData$console_log(), line, "\n")
+    )
+  }
+}
 
 # ---- UI / Theme (unchanged except small add) ----
 
@@ -67,6 +92,16 @@ my_theme <- bs_theme(
     .plot-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 15px; }
     .plot-gallery .shiny-plot-output { margin: auto; }
     .data-table-container { overflow-x: auto; }
+    
+    .data-table-container table {
+      width: 100%;
+    }
+    
+    .data-table-container th {
+      bachground-color: #005f99;
+      color: #ffffff;
+    }
+    
   "
   )
 
@@ -101,6 +136,7 @@ ui <- fluidPage(
     title = "AI-BATS",
     id = "main_navbar",
     tabPanel("Data Input", inputTabUI()),
+    tabPanel("Preprocess", preprocessTabUI()),
     tabPanel("Results", resultsTabUI()),
     tabPanel("Examples & Tutorial", examplesTabUI()),
     navbarMenu("Settings",
@@ -123,22 +159,44 @@ server <- function(input, output, session){
 
 ## ----- Upload debug in UI -----
   output$debug_upload <- renderPrint({
-    if (is.null(input$data_file)) return("❌ No file uploaded yet")
+    if (is.null(input$data_file))
+    return("❌ No file uploaded yet")
+
     df <- input$data_file
+
+    read_error <- NULL
+    read_ok <- TRUE
+
+    tryCatch({
+      read.csv(df$datapath, row.names = 1)
+    }, error = function(e) {
+      read_error <<- e$message
+      read_ok <<- FALSE
+    })
+
     list(
-      name     = df$name,
-      size     = df$size,
-      type     = df$type,
-      datapath = df$datapath,
-      exists   = file.exists(df$datapath)
+      name       = df$name,
+      #size       = df$size,
+      type       = df$type,
+      #datapath   = df$datapath,
+      #exists     = file.exists(df$datapath),
+      read_ok    = read_ok,
+      read_error = read_error
     )
   })
   
+
+## -----Observe file input change-----
+
   observeEvent(input$data_file, {
     if (is.null(input$data_file)) return()
     message("📥 fileInput changed: ", input$data_file$name)
+    appendLog(paste0("File uploaded: ", input$data_file$name))
+
     message("   → datapath: ", input$data_file$datapath, " (exists: ", file.exists(input$data_file$datapath), ")")
+    appendLog(paste0("   → datapath: ", input$data_file$datapath, " (exists: ", file.exists(input$data_file$datapath), ")"))
   }, ignoreInit = FALSE)
+
 
   # robust loader: if CSV -> wrap into list with single dataset, if RDS and list -> use as-is
   # Robust loader: CSV upload → append to /data/training.rds → return full list
@@ -146,6 +204,7 @@ server <- function(input, output, session){
     req(input$data_file)
     ext <- tolower(tools::file_ext(input$data_file$name))
     message("📥 Loading file: ", input$data_file$name, " (ext=", ext, ")")
+    appendLog(paste0("📥 Loading file: ", input$data_file$name, " (ext=", ext, ")"))
     
     if (ext != "csv") {
       stop("Please upload a CSV file. RDS upload is not supported in this version.")
@@ -159,6 +218,7 @@ server <- function(input, output, session){
     mat <- as.matrix(df)
     dataset_name <- tools::file_path_sans_ext(basename(input$data_file$name))
     message("✅ CSV loaded: dim=", paste(dim(mat), collapse = " x "), ", dataset_name=", dataset_name)
+    appendLog(paste0("✅ CSV loaded: dim=", paste(dim(mat), collapse = " x "), ", dataset_name=", dataset_name))
     
     # Create the structure expected by the pipeline
     new_dataset <- list(intensity = mat, meta = list(sample = colnames(mat), tissue = NA, diet = NA))
@@ -167,6 +227,7 @@ server <- function(input, output, session){
     training_path <- "./data/training.rds"
     if (file.exists(training_path)) {
       message("📂 Loading existing training list from: ", training_path)
+      appendLog(paste0("📂 Loading existing training list from: ", training_path))
       training_list <- readRDS(training_path)
       if (!is.list(training_list)) {
         warning("Existing training.rds is not a list — reinitializing.")
@@ -174,16 +235,19 @@ server <- function(input, output, session){
       }
     } else {
       message("🆕 No training.rds found. Creating a new list.")
+      appendLog("🆕 No training.rds found. Creating a new list.")
       training_list <- list()
     }
     
     # Append new dataset (overwrite if name already exists)
-    training_list[["Query"]] <- new_dataset
+    training_list[["00Query"]] <- new_dataset
     
     # Save back to RDS
     # saveRDS(training_list, training_path)
     message("💾 Updated training list saved to: ", training_path,
             " (", length(training_list), " datasets total)")
+    appendLog(paste0("💾 Updated training list saved to: ", training_path,
+            " (", length(training_list), " datasets total)"))
     
     # Return full list to feed into preprocessing
     return(training_list)
@@ -196,18 +260,28 @@ server <- function(input, output, session){
 ###eventReactive: run the whole pipeline once button pressed
   processed_data <- eventReactive(input$run_analysis, {
     message("▶️ Run Analysis button pressed")
-
+    appendLog("▶️ Run Analysis button pressed")
+    
+    # Add a progress bar
+    updateProgressBar(session, id = "pb",value = 0)
+    
     # create run-specific plot dir
+    
     plot_dir <- tempfile("plots_")
     dir.create(plot_dir, recursive = TRUE, showWarnings = FALSE)
     message(" [run] plot_dir = ", plot_dir)
-
+    appendLog(paste0(" [run] plot_dir = ", plot_dir))
+    
+    
     data_stes <- data_input()
     # Expect data_stes to be a named list of dataset objects each with $intensity and $meta
     if (!is.list(data_stes) || length(data_stes) == 0) {
       stop("Uploaded data must be a named list or a single intensity matrix (CSV/RDS).")
     }
-
+    
+    # Add a progress bar
+    updateProgressBar(session, id = "pb",value = 0)
+    
     ###ensure each element has intensity matrix and meta
     for (nm in names(data_stes)) {
       if (is.matrix(data_stes[[nm]])) {
@@ -221,7 +295,9 @@ server <- function(input, output, session){
       }
     }
 
-#### ---- export meta data ----    
+#### ---- export meta data ----   
+    
+    
     ## make a new data frame with meta data info
     meta_data = data.frame(
       file_name = character(),
@@ -254,6 +330,9 @@ server <- function(input, output, session){
     
     print("Meta data extraction complete")
     
+    # Add a progress bar
+    updateProgressBar(session, id = "pb",value = 15, title = "Normalization...")
+    
 ### ---- normalization ----
     
     # Simple normalization: log1p + column-centering if max > threshold
@@ -276,6 +355,9 @@ server <- function(input, output, session){
     }
    
     print("Normalization Complete")
+    
+    # Add a progress bar
+    updateProgressBar(session, id = "pb",value = 20, title = "Batch correction...")
     
 ## ---- COMBAT based batch correction ----
     
@@ -403,6 +485,9 @@ server <- function(input, output, session){
     }, silent = TRUE)
     if (!inherits(pca_combat, "try-error")) message("Saved COMBAT PCA")
     
+    # Add a progress bar
+    updateProgressBar(session, id = "pb",value = 30, title = "Data projection...")
+    
     
 ## ---- projection  ----
     # Prepare patterns for projecting back
@@ -437,11 +522,13 @@ server <- function(input, output, session){
 
       data_stes[[dataset_name]][["projection"]] <- as.data.frame(project_X_to_Y_proteins(X_count, Y_count))
       message("Projection finished for ", dataset_name)
+      appendLog(paste0("Projection finished for ", dataset_name))
       }
 
     print("Projection Complete")
     
-    
+    # Add a progress bar
+    updateProgressBar(session, id = "pb",value = 45, title = "Data imputation...")
 
 ## ---- imputation ----
     # Build final projection matrix across datasets
@@ -485,6 +572,9 @@ server <- function(input, output, session){
 
     print("Imputed Matrix Complete")
     out_date_val(out_date)  # store for download handler
+    
+    # Add a progress bar
+    updateProgressBar(session, id = "pb",value = 60, title = "Browning score calculation...")
 
     # Save final outputs (RDS & CSV)
     # out_rds <- file.path(OUTPUT_DIR, paste0("imputed_matrix_", out_date, ".rds"))
@@ -495,6 +585,7 @@ server <- function(input, output, session){
     out_csv <- file.path(OUTPUT_DIR, paste0("imputed_matrix_", out_date, ".csv"))
     write.csv(imputed_matrix, file = paste0(OUTPUT_DIR,"/imputed_matrix_", out_date, ".csv"), row.names = TRUE)
     message("Saved imputed CSV to: ", out_csv)
+    appendLog(paste0("Saved imputed CSV to: ", out_csv))
 
     # Make a simple PCA plot and save it (robust)
     pca_ok <- try({
@@ -537,21 +628,31 @@ server <- function(input, output, session){
                            log_file = file.path(OUTPUT_DIR, "/browning_pipeline.log")
        )
        }, silent = FALSE)
+    
+    # Add a progress bar
+    updateProgressBar(session, id = "pb",value = 85, title = "Plotting results...")
   
     
 ## ---- plot machine-learning results ----
     ai_prediction = read.csv(paste0(OUTPUT_DIR,"/python_output/all_sample_scores.csv"))
-    query_samples = ai_prediction %>% subset(Batch=="Query")
+    
+    query_samples = ai_prediction %>% subset(Batch=="00Query")
     
     for(sample in query_samples$X){
       plot_browning_score(sample,ai_prediction,plot_dir)
     }
     
+    # Add a progress bar
+    updateProgressBar(session, id = "pb",value = 100, title = "Analysis finished...")
+    
+    query_preview = query_samples[,c("X","Predicted_Tissue","pca_browning_score_PC1")]
+    colnames(query_preview) = c("Query_sample","Predicted_tissue","Browning_score")
     
 ## ----Return results----
     list(
-      # imputed_matrix = imputed_matrix,
-      ai_prediction = NULL,  # placeholder for future
+      imputed_matrix = imputed_matrix,
+      ai_prediction = ai_prediction,
+      query_preview = query_preview,
       plot_dir = plot_dir,
       out_date = out_date
     )
@@ -560,14 +661,17 @@ server <- function(input, output, session){
   # observer that reacts to the button and updates UI using processed_data()
   observeEvent(input$run_analysis, {
     message("⚡ collect processed_data() result and update UI")
+    appendLog("⚡ collect processed_data() result and update UI")
     pd <- NULL
     try({
       pd <- processed_data()
     }, silent = FALSE)
+    
 
     if (is.null(pd)) {
       output$analysis_status <- renderText("❌ processed_data() returned NULL — check console.")
       message("processed_data returned NULL")
+      appendLog("processed_data returned NULL")
       return()
     }
     results(pd)
@@ -576,6 +680,7 @@ server <- function(input, output, session){
       pngs <- list.files(pd$plot_dir, pattern = "\\.png$", full.names = TRUE)
       output_plots(pngs)
       message("🖼️ Found ", length(pngs), " plot(s) in ", pd$plot_dir)
+      appendLog(paste0("🖼️ Found ", length(pngs), " plot(s) in ", pd$plot_dir))
     } else {
       output_plots(character(0))
     }
@@ -585,10 +690,14 @@ server <- function(input, output, session){
   output$preview_table <- renderDT({
     pd <- results()
     req(!is.null(pd))
-    if (!is.null(pd$imputed_matrix)) {
-      datatable(head(as.data.frame(pd$imputed_matrix), 5), options = list(dom = 't', paging = FALSE))
+    if (!is.null(pd$ai_prediction)) {
+      datatable(head(as.data.frame(pd$ai_prediction), 5), 
+                class = "table table-striped table-over table-dark",
+                options = list(dom = 't', paging = FALSE))
     } else {
-      datatable(data.frame(Note = "No matrix in results"), options = list(dom = 't'))
+      datatable(data.frame(Note = "No matrix in results"), 
+                class = "table table-striped table-over table-dark",
+                options = list(dom = 't'))
     }
   })
 
@@ -602,16 +711,20 @@ server <- function(input, output, session){
   })
 
 ## ----Results table----
-  output$results_table <- renderDT({
+  output$final_results_table <- renderDT({
     dat <- results(); req(!is.null(dat))
     if (is.data.frame(dat)) {
       datatable(dat, options = list(pageLength = 10, autoWidth = TRUE))
-    } else if (is.list(dat) && !is.null(dat$imputed_matrix)) {
-      datatable(as.data.frame(dat$imputed_matrix), options = list(pageLength = 10, autoWidth = TRUE))
+    } else if (is.list(dat) && !is.null(dat$query_preview)) {
+      datatable(as.data.frame(dat$query_preview), 
+                class = "table table-striped table-over table-dark",
+                options = list(pageLength = 10, autoWidth = TRUE))
     } else {
-      datatable(data.frame(Note = "No renderable data frame in results"), options = list(dom = 't'))
-    }
-  })
+      datatable(data.frame(Note = "No renderable data frame in results"), 
+                class = "table table-striped table-over table-dark",
+                options = list(dom = 't'))
+    }                 
+  })    
 
 ## ----Plots gallery UI----
   
@@ -694,6 +807,7 @@ server <- function(input, output, session){
     
     # Debug print
     message("DEBUG (final results): Found ", length(img_files), " final result figures.")
+    appendLog( paste0("DEBUG (final results): Found ", length(img_files), " final result figures.") )
     
     # ---- DYNAMIC UI CREATION ----
     output$final_figures_gallery <- renderUI({
@@ -753,6 +867,23 @@ server <- function(input, output, session){
       dat <- results(); req(!is.null(dat))
       if (is.list(dat) && !is.null(dat$imputed_matrix)) {
         write.csv(as.data.frame(dat$imputed_matrix), file = file, row.names = TRUE)
+      } else if (is.data.frame(dat)) {
+        write.csv(dat, file = file, row.names = FALSE)
+      } else {
+        writeLines("Output is not a data frame.", file)
+      }
+    }
+  )
+  
+  output$download_final_results <- downloadHandler(
+    filename = function() {
+      od <- out_date_val()
+      paste0("final_results_", od, ".csv")
+    },
+    content = function(file) {
+      dat <- results(); req(!is.null(dat))
+      if (is.list(dat) && !is.null(dat$ai_prediction)) {
+        write.csv(as.data.frame(dat$ai_prediction), file = file, row.names = TRUE)
       } else if (is.data.frame(dat)) {
         write.csv(dat, file = file, row.names = FALSE)
       } else {
