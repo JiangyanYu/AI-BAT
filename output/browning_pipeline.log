@@ -4,27 +4,27 @@
   warn(
 Namespace(protein_data_path='.///output/imputed_matrix_2026-02-05.csv', precomputed_lasso_coefs_path='./data/python_input/coefs_from_lasso.pkl', brown_markers_path='./data/python_input/marker.txt', sample_labels_path='.///output/meta_data2026-02-05.csv', recompute_lasso_markers=True, compute_shaps=False)
 LASSO genes not found, calculating...
-Selected (92, 5) features using LASSO.
+Selected (91, 5) features using LASSO.
 
 ## Generating Base Plots ##
 
 ## Generating Base Plots ##
 (116, 1551)
-PCA Explained Variance Ratios: [0.083937   0.04865588]
+PCA Explained Variance Ratios: [0.0839194  0.04865017]
 --- Calculating LDA-based Score (PCA features) ---
 --- Calculating LDA-based Score (LASSO features) ---
 --- Calculating Random Forest-based Score ---
 --- Calculating Logistic Regression-based Score (LASSO features) ---
 --- Calculating Logistic Regression-based Score (Marker genes) ---
 Sample of calculated scores:
-                                                    pca_browning_score_PC1  ...     Batch
-Haas2021-Haas2021-X.9..TP_Thermogenesis_RT_A.PG...               82.914047  ...  Haas2021
-Haas2021-Haas2021-X.10..TP_Thermogenesis_RT_B.P...               84.375089  ...  Haas2021
-Haas2021-Haas2021-X.11..TP_Thermogenesis_RT_C.P...               83.310491  ...  Haas2021
-Haas2021-Haas2021-X.12..TP_Thermogenesis_RT_D.P...               82.985774  ...  Haas2021
-Haas2022-Haas2022-X.9..2022_TP_Thermogenesis_RT...               83.072628  ...  Haas2022
+                                                    pca_browning_score_PC1  ...  Predicted_Tissue
+Haas2021-Haas2021-X.9..TP_Thermogenesis_RT_A.PG...               82.913387  ...               BAT
+Haas2021-Haas2021-X.10..TP_Thermogenesis_RT_B.P...               84.398019  ...               BAT
+Haas2021-Haas2021-X.11..TP_Thermogenesis_RT_C.P...               83.318886  ...               BAT
+Haas2021-Haas2021-X.12..TP_Thermogenesis_RT_D.P...               82.986962  ...               BAT
+Haas2022-Haas2022-X.9..2022_TP_Thermogenesis_RT...               83.045592  ...               BAT
 
-[5 rows x 19 columns]
+[5 rows x 20 columns]
 --- Generating score distribution plots ---
 
 ## Plotting Score Distributions ##
@@ -45,6 +45,7 @@ Haas2022-Haas2022-X.9..2022_TP_Thermogenesis_RT...               83.072628  ... 
 [plot_score_distributions] Saved ./output/python_output/e-net_tissue_score_WAT_distribution.png
 [plot_score_distributions] Saved ./output/python_output/e-net_tissue_score_eWAT_distribution.png
 [plot_score_distributions] Saved ./output/python_output/e-net_tissue_score_iWAT_distribution.png
+[plot_score_distributions] Skipping 'Predicted_Tissue' (no numeric data after coercion).
 === AI-BATS Pipeline Completed Successfully ===
 Results saved to: script_outputs/
 - Comprehensive scores: all_sample_scores.csv
@@ -52,5 +53,5 @@ Results saved to: script_outputs/
 - SHAP analysis: SHAP value arrays and plots
 - Feature importance: Individual model importance plots
 - Correlation analysis: correlation_matrix.png
-Total time taken: 63.72280788421631 seconds
-[W205 07:46:16.411329165 AllocatorConfig.cpp:28] Warning: PYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function operator())
+Total time taken: 63.46739625930786 seconds
+[W205 13:17:40.165000287 AllocatorConfig.cpp:28] Warning: PYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function operator())

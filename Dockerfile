@@ -35,19 +35,10 @@ RUN pip install --no-cache-dir \
 # Install Bioconductor manager
 RUN R -e "install.packages('BiocManager', repos='https://cloud.r-project.org/')"
 
-# Install CRAN packages in a separate step to use Docker caching
-RUN R -e "install.packages(c( \
-    'magrittr', 'dplyr', 'data.table', 'ggplot2', 'tidyr', 'purrr', \
-    'RColorBrewer', 'gridExtra', 'tibble', 'shiny', 'DT', 'png', 'grid'), \
-    repos='https://cloud.r-project.org/')"
-
-# Install Bioconductor manager
-RUN R -e "install.packages('BiocManager', repos='https://cloud.r-project.org/')"
-
 # Install specific versions of CRAN packages
 RUN R -e "install.packages(c( \
-    'magrittr'='2.0.3', 'dplyr'='1.1.4', 'data.table'='1.15.4', 'ggplot2'='3.5.1', 'tidyr'='1.3.1', 'purrr'='1.0.2', \
-    'RColorBrewer'='1.1-3', 'gridExtra'='2.3', 'tibble'='3.2.1', 'shiny'='1.10.0', 'DT'='0.33', 'png'='0.1-8', 'grid'='4.3.2' ), \
+    'magrittr'='2.0.4', 'dplyr'='1.1.4', 'data.table'='1.18.0', 'ggplot2'='4.0.1', 'tidyr'='1.3.2', 'purrr'='1.2.1', \
+    'RColorBrewer'='1.1.3', 'gridExtra'='2.3', 'tibble'='3.3.1', 'shiny'='1.12.1','shinyWidgets'='0.9.0', 'DT'='0.34.0', 'png'='0.1.8', 'grid'='4.3.3' ), \
     repos='https://cloud.r-project.org/')"
 
 # Install specific versions of Bioconductor packages

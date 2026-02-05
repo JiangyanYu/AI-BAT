@@ -122,7 +122,9 @@ def main(protein_data_path = './output/imputed_matrix_2025-11-10.csv',
 
     # Tissue Prediction Pipeline Initialization
     tissue_pipeline = MLTissuePredictionPipeline()
-    tissue_scores  = tissue_pipeline.fit(protein_df, tissue).predict_proba(protein_df)
+    tissue_scores  = tissue_pipeline.fit(protein_df, tissue).predict_proba(protein_df)*100
+    tissue_scores['Predicted_Tissue'] = tissue_scores.idxmax(axis=1)
+    tissue_scores['Predicted_Tissue'] = [i.split('_')[-1] for i in tissue_scores['Predicted_Tissue']]
     #print("Tissue prediction scores:")
     #print(tissue_scores.head())
     #quit()
@@ -277,6 +279,14 @@ def main(protein_data_path = './output/imputed_matrix_2025-11-10.csv',
     # SECTION 9: COMPOSITE SCORE CALCULATION AND FINAL ANALYSIS
     # ==========================================================================
 
+    #scale scores between 0 and 100
+    from sklearn.preprocessing import MinMaxScaler
+    scaler = MinMaxScaler(feature_range=(0, 100))
+    s_b = all_sample_scores[['Status', 'Batch']].copy()
+    all_sample_scores_pc = pd.DataFrame(scaler.fit_transform(all_sample_scores[['pca_browning_score_PC1','pca_browning_score_PC2']]),index=all_sample_scores.index,columns=['pca_browning_score_PC1','pca_browning_score_PC2'])
+    all_sample_scores_ml = all_sample_scores.drop(columns=['Status','Batch','pca_browning_score_PC1','pca_browning_score_PC2']).copy() * 100
+    all_sample_scores = all_sample_scores_pc.join(all_sample_scores_ml).join(s_b)
+    
     # --- Calculate Composite Browning Score ---
     # Combine scores from multiple machine learning approaches using weighted average
     # The composite score provides a robust assessment by leveraging multiple models
@@ -286,12 +296,7 @@ def main(protein_data_path = './output/imputed_matrix_2025-11-10.csv',
     all_sample_scores['Composite_Score'] = composite_score
     all_sample_scores = all_sample_scores.join(tissue_scores, how='left', rsuffix='_tissue_prediction')
 
-    #scale scores between 0 and 100
-    from sklearn.preprocessing import MinMaxScaler
-    scaler = MinMaxScaler(feature_range=(0, 100))
-    s_b = all_sample_scores[['Status', 'Batch']].copy()
-    all_sample_scores = pd.DataFrame(scaler.fit_transform(all_sample_scores.drop(columns=['Status', 'Batch'])), index=all_sample_scores.index, columns=all_sample_scores.drop(columns=['Status', 'Batch']).columns)
-    all_sample_scores = all_sample_scores.join(s_b)
+
     all_sample_scores.to_csv(f'{output_dir}/all_sample_scores.csv')
 
     # Display sample results for verification
@@ -302,6 +307,7 @@ def main(protein_data_path = './output/imputed_matrix_2025-11-10.csv',
     # Analyze relationships between different scoring methods
     # Focus on intermediate samples to understand score consistency
     to_drop = [c for c in all_sample_scores.columns if 'White' in c]  # Remove White-specific scores
+    to_drop += tissue_scores.columns.tolist() # Remove tissue prediction scores
     correlation_matrix = all_sample_scores.drop(columns=['Status', 'Batch']+to_drop)[all_sample_scores.Status.eq('Intermediate')].corr()
     
     # Create correlation heatmap for visual analysis

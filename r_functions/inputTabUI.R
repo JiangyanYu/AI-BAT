@@ -20,6 +20,14 @@ inputTabUI <- function() {
       ),
       column(
         width = 6,
+        tags$b("Analysis progress"), br(),
+        progressBar(
+          id = "pb",
+          value = 0,
+          total = 100,
+          title = "",
+          display_pct = TRUE
+        ),
         h3("Data Preview"),
         p("After uploading and running analysis, a preview of the data will appear here."),
         DTOutput("preview_table"),
