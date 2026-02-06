@@ -1,27 +1,2 @@
-2026-02-05 13:14:47 | ▶️ Run Analysis button pressed 
-2026-02-05 13:14:47 |  [run] plot_dir = /tmp/RtmprLcMGZ/plots_16021a520 
-2026-02-05 13:14:50 | File uploaded: Rhabi_control1.csv 
-2026-02-05 13:14:50 |    → datapath: /tmp/RtmprLcMGZ/51e1277d0b5e97f275e44daf/0.csv (exists: TRUE) 
-2026-02-05 13:14:52 | ⚡ collect processed_data() result and update UI 
-2026-02-05 13:14:52 | ▶️ Run Analysis button pressed 
-2026-02-05 13:14:52 |  [run] plot_dir = /tmp/RtmprLcMGZ/plots_11732242f 
-2026-02-05 13:14:52 | 📥 Loading file: Rhabi_control1.csv (ext=csv) 
-2026-02-05 13:14:52 | ✅ CSV loaded: dim=3288 x 1, dataset_name=Rhabi_control1 
-2026-02-05 13:14:52 | 📂 Loading existing training list from: ./data/training.rds 
-2026-02-05 13:14:53 | 💾 Updated training list saved to: ./data/training.rds (13 datasets total) 
-2026-02-05 13:15:13 | Projection finished for Haas2021_RT_control.rds 
-2026-02-05 13:15:17 | Projection finished for Haas2022_RT_control.rds 
-2026-02-05 13:15:37 | Projection finished for Harney_BAT_control.rds 
-2026-02-05 13:15:43 | Projection finished for Johanna_control.rds 
-2026-02-05 13:15:48 | Projection finished for KristinaeWAT_eWat_control.rds 
-2026-02-05 13:15:52 | Projection finished for KristinaiWAT_iWat_control.rds 
-2026-02-05 13:15:58 | Projection finished for Melina_control 
-2026-02-05 13:16:02 | Projection finished for Oeckl_control.rds 
-2026-02-05 13:16:05 | Projection finished for Rhabi_control.rds 
-2026-02-05 13:16:07 | Projection finished for WangBAT_control 
-2026-02-05 13:16:11 | Projection finished for WangWAT_control 
-2026-02-05 13:16:14 | Projection finished for Williams_control.rds 
-2026-02-05 13:16:15 | Projection finished for 00Query 
-2026-02-05 13:16:16 | Saved imputed CSV to: .///output/imputed_matrix_2026-02-05.csv 
-2026-02-05 13:17:40 | 🖼️ Found 8 plot(s) in /tmp/RtmprLcMGZ/plots_11732242f 
-2026-02-05 13:17:40 | DEBUG (final results): Found 1 final result figures. 
+2026-02-06 13:50:07 | ▶️ Run Analysis button pressed 
+2026-02-06 13:50:07 |  [run] plot_dir = /var/folders/g0/rgt2dmkd08xc6472yg_hs9600000gr/T//RtmpoF49Dx/plots_1650d7611217 

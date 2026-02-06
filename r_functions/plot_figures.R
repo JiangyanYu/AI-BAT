@@ -43,9 +43,15 @@ pca_plot <- function(input_data, meta_data, file_name, plot_dir) {
   
   # Plot
   p1 <- ggplot(pc_df, aes(x = PC1, y = PC2, color = batch)) +
-    geom_point() +
-    ggtitle(file_name) +
-    theme_minimal()
+    geom_point(size=5) +
+    theme(axis.text = element_text(size=15), 
+          axis.title = element_text(size=15),
+          legend.text = element_text(size=15),
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),     
+          panel.border = element_rect(colour = "black", fill=NA, linewidth=1)) +
+    ggtitle(file_name) 
   
   # Save (and verify)
   out_path <- file.path(plot_dir, paste0(file_name, ".png"))
@@ -70,7 +76,7 @@ pca_plot <- function(input_data, meta_data, file_name, plot_dir) {
 # ---- PCA browning score ----
 plot_browning_score <- function(sample, ai_results, plot_dir) {
   df <- ai_results
-  df$pca_browning_score_PC1_scaled <- scales::rescale(df$pca_browning_score_PC1, to = c(0, 100))
+  df$pca_browning_score_PC1_scaled <- df$pca_browning_score_PC1
   
   # Output path
   out_path <- file.path(plot_dir, paste0("Browning_score_", sample, ".png"))
@@ -101,9 +107,13 @@ plot_browning_score <- function(sample, ai_results, plot_dir) {
     text(sel$pca_browning_score_PC1_scaled, 3.0,
          labels = paste0(sel$X, "\n", round(sel$pca_browning_score_PC1_scaled, 2)),
          cex = 0.8, font = 2)
+
+    text(20, 3.5, labels = sel$Predicted_Tissue, cex = 1.2)
   }
   
-  text(10, 3.5, "The browning score for your sample is:", cex = 1.2)
+  text(15, 3.0, "The browning score for your sample is:", cex = 1.2)
+  text(-5, 3.5, "Your sample is: ", cex = 1.2)
+  
   dev.off()
 }
 

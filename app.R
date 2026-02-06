@@ -133,12 +133,23 @@ ui <- fluidPage(
   theme = my_theme,
   tags$head(tags$style(HTML(".theme-toggle { margin-right: 10px; color: #ffffff; }"))),
   navbarPage(
-    title = "AI-BATS",
+    title = div(
+      tags$img(src = "logo.png",
+               height = "30px",
+               style = "margin-right:8px; vertical-align:middle;"),
+      span("AI-BAT")),
     id = "main_navbar",
     tabPanel("Data Input", inputTabUI()),
     tabPanel("Preprocess", preprocessTabUI()),
     tabPanel("Results", resultsTabUI()),
     tabPanel("Examples & Tutorial", examplesTabUI()),
+    tabPanel("Report Issues",
+             tags$a(
+               href = "https://github.com/JiangyanYu/AI-BAT/issues",
+               target = "_blank",
+               class = "btn btn-primary",
+               "Open GitHub Issues"
+             )),
     navbarMenu("Settings",
                tabPanel("Appearance",
                         fluidRow(column(width = 12, align = "center", radioButtons("theme_choice", "Theme:", choices = c("Dark", "Light"), inline = TRUE)))
@@ -545,6 +556,8 @@ server <- function(input, output, session){
       return(mat)
     })
     all_matrices_proj <- Reduce(cbind, all_matrices)
+    
+    write.csv(all_matrices_proj, file = paste0(OUTPUT_DIR,"/projected_matrix_", out_date, ".csv"), row.names = TRUE)
 
     # Make a simple PCA plot and save it (robust)
     pca_projection <- try({
@@ -597,17 +610,38 @@ server <- function(input, output, session){
       pc_df$batch = strsplit(pc_df$sample, "-") %>% sapply(function(x) x[1])
       write.csv(pc_df , file = paste0(OUTPUT_DIR,"/PCA_of_imputed_matrix_", out_date, ".csv"), row.names = TRUE)
       p1 <- ggplot(pc_df, aes(x = PC1, y = PC2, color = batch)) +
-        geom_point() +
+        geom_point(size=5) +
+        theme(axis.text = element_text(size=15), 
+              axis.title = element_text(size=15),
+              legend.text = element_text(size=15),
+              panel.background = element_blank(),
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),     
+              panel.border = element_rect(colour = "black", fill=NA, linewidth=1))+
         # geom_text(hjust = 1.2, size = 3) +
         ggtitle("PCA_after_imputation (color by batch)")
 
       p2 <- ggplot(pc_df, aes(x = PC1, y = PC2, color = tissue)) +
-        geom_point() +
+        geom_point(size=5) +
+        theme(axis.text = element_text(size=15), 
+              axis.title = element_text(size=15),
+              legend.text = element_text(size=15),
+              panel.background = element_blank(),
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),     
+              panel.border = element_rect(colour = "black", fill=NA, linewidth=1))+
         # geom_text(hjust = 1.2, size = 3) +
         ggtitle("PCA_after_imputation (color by tissue)")
 
       p3 <- ggplot(pc_df, aes(x = PC1, y = PC2, color = diet)) +
-        geom_point() +
+        geom_point(size=5) +
+        theme(axis.text = element_text(size=15), 
+              axis.title = element_text(size=15),
+              legend.text = element_text(size=15),
+              panel.background = element_blank(),
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(),     
+              panel.border = element_rect(colour = "black", fill=NA, linewidth=1))+
         # geom_text(hjust = 1.2, size = 3) +
         ggtitle("PCA_after_imputation (color by diet)")
 
@@ -646,7 +680,7 @@ server <- function(input, output, session){
     updateProgressBar(session, id = "pb",value = 100, title = "Analysis finished...")
     
     query_preview = query_samples[,c("X","Predicted_Tissue","pca_browning_score_PC1")]
-    colnames(query_preview) = c("Query_sample","Predicted_tissue","Browning_score")
+    colnames(query_preview) = c("Query_Sample","Predicted_Tissue","Browning_Score")
     
 ## ----Return results----
     list(
